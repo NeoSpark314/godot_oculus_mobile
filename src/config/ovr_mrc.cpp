@@ -99,7 +99,7 @@ GDCALLINGCONV void *ovr_mrc_constructor(godot_object *p_instance, void *p_method
 
 
 GDCALLINGCONV void ovr_mrc_destructor(godot_object *p_instance, void *p_method_data, void *p_user_data) {
-    ovrm_UnloadSharedLibrary();
+    //ovrm_UnloadSharedLibrary();
     if (p_user_data != NULL) {
 		ovr_config_data_struct *ovr_config_data = (ovr_config_data_struct *) p_user_data;
 		if (ovr_config_data->ovr_mobile_session != NULL) {
@@ -111,12 +111,12 @@ GDCALLINGCONV void ovr_mrc_destructor(godot_object *p_instance, void *p_method_d
 
 GDCALLINGCONV godot_variant initialize(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
-        bool result_load_shared_library = ovrm_LoadSharedLibrary();
+        /*bool result_load_shared_library = ovrm_LoadSharedLibrary();
         if (!result_load_shared_library) {
             ALOGE("OvrMrc: initialize(): failed to load shared library");
     		api->godot_variant_new_bool(&ret, false);
             return ret;
-        } 
+        } */
 
         if (!ovrm_GetAPIs()) {
             ALOGE("OvrMrc: initialize(): ovrm_GetAPIs() failed to return API.");

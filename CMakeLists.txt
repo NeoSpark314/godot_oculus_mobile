@@ -72,7 +72,7 @@ endif (NOT (EXISTS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}))
 # Sets the path to the VrApi containing directory. Update this variable if the api is in another location.
 set(OVR_ROOT_DIR "${CMAKE_SOURCE_DIR}/ovr_sdk_mobile")
 
-set(OVR_MRC_DIR "${CMAKE_SOURCE_DIR}/ovr_sdk_mobile/OVRMrcLib")
+set(OVR_MRC_DIR "${CMAKE_SOURCE_DIR}/ovr_sdk_mobile/OVRMrcShimLib")
 set(OVR_MRC_HEADERS_DIR "${OVR_MRC_DIR}/Include")
 
 # Location to the Godot headers directory. The default location is "${CMAKE_SOURCE_DIR}/godot_headers"
@@ -151,13 +151,13 @@ set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS ${GODOT_LI
 # Copy the VrApi shared library to the output directory.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${VRAPI_LIB_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-if (EnableMRC)
-    if (EXISTS ${OVR_MRC_LIB_PATH})
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OVR_MRC_LIB_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-    else()
-        message(FATAL_ERROR "Could not find MRC library ${OVR_MRC_LIB_PATH}")
-    endif()
-endif(EnableMRC)
+#if (EnableMRC)
+#    if (EXISTS ${OVR_MRC_LIB_PATH})
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OVR_MRC_LIB_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+#    else()
+#        message(FATAL_ERROR "Could not find MRC library ${OVR_MRC_LIB_PATH}")
+#    endif()
+#endif(EnableMRC)
 
 set(BITS 32)
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
