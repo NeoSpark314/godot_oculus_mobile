@@ -15,7 +15,7 @@
 #include "config/ovr_tracking_transform.h"
 #include "config/ovr_hand_tracking.h"
 #include "config/ovr_utilities.h"
-#include "config/ovr_mrc.h"
+#include "config/ovr_mixed_reality_capture.h"
 
 // experimental low-level VrApi access
 #include "config/ovr_vr_api_proxy.h"

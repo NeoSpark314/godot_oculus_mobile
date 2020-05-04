@@ -11,4 +11,4 @@ Android.arm64-v8a="res://addons/godot_ovrmobile/libs/arm64-v8a/libgodot_ovrmobil
 
 [dependencies]
 
-Android.arm64-v8a=[ "res://addons/godot_ovrmobile/libs/arm64-v8a/libvrapi.so", "res://addons/godot_ovrmobile/libs/arm64-v8a/libOVRMrcLib.so"  ]
+Android.arm64-v8a=[ "res://addons/godot_ovrmobile/libs/arm64-v8a/libvrapi.so" ]

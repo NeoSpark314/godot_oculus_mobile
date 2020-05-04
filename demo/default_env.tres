@@ -10,6 +10,6 @@ ground_curve = 0.01
 sun_energy = 16.0
 
 [resource]
-background_mode = 2
 background_sky = SubResource( 1 )
+ambient_light_color = Color( 1, 1, 1, 1 )
 ssao_blur = 1

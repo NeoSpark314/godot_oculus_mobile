@@ -1,5 +1,5 @@
 #include "config_common.h"
-#include "ovr_mrc.h"
+#include "ovr_mixed_reality_capture.h"
 
 #include "OVR_Mrc_Shim.h"
 #include "../Source/OVR_Mrc_Shim.cpp"
@@ -105,21 +105,22 @@ GDCALLINGCONV void ovr_mrc_destructor(godot_object *p_instance, void *p_method_d
 		if (ovr_config_data->ovr_mobile_session != NULL) {
 			ovr_config_data->ovr_mobile_session = NULL;
 		}
+        ovrm_GetAPIs()->Shutdown();
 	}
 }
 
 
 GDCALLINGCONV godot_variant initialize(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
-        /*bool result_load_shared_library = ovrm_LoadSharedLibrary();
+        bool result_load_shared_library = ovrm_LoadSharedLibrary(nullptr);
         if (!result_load_shared_library) {
-            ALOGE("OvrMrc: initialize(): failed to load shared library");
+            ALOGE("Godot OvrMrc: initialize(): failed to load shared library");
     		api->godot_variant_new_bool(&ret, false);
             return ret;
-        } */
+        }
 
         if (!ovrm_GetAPIs()) {
-            ALOGE("OvrMrc: initialize(): ovrm_GetAPIs() failed to return API.");
+            ALOGE("Godot OvrMrc: initialize(): ovrm_GetAPIs() failed to return API.");
     		api->godot_variant_new_bool(&ret, false);
             return ret;
         }
@@ -128,22 +129,23 @@ GDCALLINGCONV godot_variant initialize(godot_object *p_instance, void *p_method_
         int minorVersion = 0;
         int patchVersion = 0;
         ovrm_GetAPIs()->GetVersions(&majorVersion, &minorVersion, &patchVersion);
-        ALOGV("OvrMrc: initializing ovrm version %d.%d.%d", majorVersion, minorVersion, patchVersion);
+        ALOGV("Godot OvrMrc: initializing ovrm version %d.%d.%d", majorVersion, minorVersion, patchVersion);
 
         ovrmResult result_ovrm_initialize = ovrm_GetAPIs()->Initialize(ovr, ovr_java->Vm, ovr_java->ActivityObject);
 
         if (result_ovrm_initialize != ovrmSuccess) {
-            ALOGE("OvrMrc: initialize(): ovrm_Initialize(...) failed with code %d", result_ovrm_initialize);
+            ALOGE("Godot OvrMrc: initialize(): ovrm_Initialize(...) failed with code %d", result_ovrm_initialize);
             api->godot_variant_new_bool(&ret, false);
             return ret;
         } 
           
         ovrmResult result_ovrm_configure_gles = ovrm_GetAPIs()->ConfigureGLES(eglGetCurrentContext(), false, false);
         if (result_ovrm_configure_gles != ovrmSuccess) {
-            ALOGE("OvrMrc: initialize(): ovrm_ConfigureGLES(...) failed with code %d", result_ovrm_configure_gles);
+            ALOGE("Godot OvrMrc: initialize(): ovrm_ConfigureGLES(...) failed with code %d", result_ovrm_configure_gles);
             api->godot_variant_new_bool(&ret, false);
             return ret;
         }
+        ALOGV("Godot OvrMrc: current egl context = %d", eglGetCurrentContext());
 
         api->godot_variant_new_bool(&ret, true);
     );
@@ -152,17 +154,17 @@ GDCALLINGCONV godot_variant initialize(godot_object *p_instance, void *p_method_
 GDCALLINGCONV godot_variant set_mrc_activation_mode(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: set_mrc_activation_mode(int) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: set_mrc_activation_mode(int) requires 1 parameter; got %d", p_num_args);
         } else {
             int activationMode = api->godot_variant_as_int(p_args[0]);
 
             ovrmResult result = ovrm_GetAPIs()->SetMrcActivationMode((ovrmMediaMrcActivationMode)activationMode);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: set_mrc_activation_mode(%d) failed with code %d", activationMode, result);
+                ALOGE("Godot OvrMrc: set_mrc_activation_mode(%d) failed with code %d", activationMode, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             } else {
-                ALOGV("OvrMrc: set_mrc_activation_mode(%d) called.", activationMode);
+                ALOGV("Godot OvrMrc: set_mrc_activation_mode(%d) called.", activationMode);
             }
 
             api->godot_variant_new_bool(&ret, true);
@@ -175,7 +177,7 @@ GDCALLINGCONV godot_variant get_mrc_activation_mode(godot_object *p_instance, vo
         ovrmMediaMrcActivationMode value = ovrmMediaMrcActivationMode_EnumSize;
         ovrmResult result = ovrm_GetAPIs()->GetMrcActivationMode(&value);
         if (result != ovrmSuccess) {
-            ALOGE("OvrMrc: get_mrc_activation_mode() failed with code %d", result);
+            ALOGE("Godot OvrMrc: get_mrc_activation_mode() failed with code %d", result);
         }
         api->godot_variant_new_int(&ret, value);
     );
@@ -186,7 +188,7 @@ GDCALLINGCONV godot_variant is_mrc_enabled(godot_object *p_instance, void *p_met
         ovrmBool value = false;
         ovrmResult result = ovrm_GetAPIs()->IsMrcEnabled(&value);
         if (result != ovrmSuccess) {
-            ALOGE("OvrMrc: is_mrc_enabled() failed with code %d", result);
+            ALOGE("Godot OvrMrc: is_mrc_enabled() failed with code %d", result);
             api->godot_variant_new_bool(&ret, false);
             return ret;
         }
@@ -199,7 +201,7 @@ GDCALLINGCONV godot_variant is_mrc_activated(godot_object *p_instance, void *p_m
         ovrmBool value = false;
         ovrmResult result = ovrm_GetAPIs()->IsMrcActivated(&value);
         if (result != ovrmSuccess) {
-            ALOGE("OvrMrc: is_mrc_activated() failed with code %d", result);
+            ALOGE("Godot OvrMrc: is_mrc_activated() failed with code %d", result);
             api->godot_variant_new_bool(&ret, false);
             return ret;
         }
@@ -210,13 +212,13 @@ GDCALLINGCONV godot_variant is_mrc_activated(godot_object *p_instance, void *p_m
 GDCALLINGCONV godot_variant set_mrc_input_video_buffer_type(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: set_mrc_input_video_buffer_type(int) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: set_mrc_input_video_buffer_type(int) requires 1 parameter; got %d", p_num_args);
         } else {
             int mode = api->godot_variant_as_int(p_args[0]);
 
             ovrmResult result = ovrm_GetAPIs()->SetMrcInputVideoBufferType((ovrmMediaInputVideoBufferType)mode);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: set_mrc_input_video_buffer_type(%d) failed with code %d", mode, result);
+                ALOGE("Godot OvrMrc: set_mrc_input_video_buffer_type(%d) failed with code %d", mode, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
@@ -229,13 +231,13 @@ GDCALLINGCONV godot_variant set_mrc_input_video_buffer_type(godot_object *p_inst
 GDCALLINGCONV godot_variant set_mrc_audio_sample_rate(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: set_mrc_audio_sample_rate(int sampleRate) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: set_mrc_audio_sample_rate(int sampleRate) requires 1 parameter; got %d", p_num_args);
         } else {
             int rate = api->godot_variant_as_int(p_args[0]);
 
             ovrmResult result = ovrm_GetAPIs()->SetMrcAudioSampleRate(rate);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: set_mrc_audio_sample_rate(%d) failed with code %d", rate, result);
+                ALOGE("Godot OvrMrc: set_mrc_audio_sample_rate(%d) failed with code %d", rate, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
@@ -250,7 +252,7 @@ GDCALLINGCONV godot_variant update(godot_object *p_instance, void *p_method_data
     CHECK_OVR(
         ovrmResult result = ovrm_GetAPIs()->Update();
         if (result != ovrmSuccess) {
-            ALOGE("OvrMrc: update() failed with code %d", result);
+            ALOGE("Godot OvrMrc: update() failed with code %d", result);
             api->godot_variant_new_bool(&ret, false);
             return ret;
         }
@@ -265,7 +267,7 @@ GDCALLINGCONV godot_variant get_external_camera_count(godot_object *p_instance, 
         int camera_count = 0;
         ovrmResult result = ovrm_GetAPIs()->GetExternalCameraCount(&camera_count);
         if (result != ovrmSuccess) {
-            ALOGE("OvrMrc: get_external_camera_count() failed with code %d", result);
+            ALOGE("Godot OvrMrc: get_external_camera_count() failed with code %d", result);
             api->godot_variant_new_int(&ret, 0);
             return ret;
         }
@@ -277,14 +279,14 @@ GDCALLINGCONV godot_variant get_external_camera_count(godot_object *p_instance, 
 GDCALLINGCONV godot_variant get_external_camera_intrinsics(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: get_external_camera_intrinsics(int cameraId) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: get_external_camera_intrinsics(int cameraId) requires 1 parameter; got %d", p_num_args);
         } else {
             int cameraId = api->godot_variant_as_int(p_args[0]);
             ovrmCameraIntrinsics cameraIntrinsics;
 
             ovrmResult result = ovrm_GetAPIs()->GetExternalCameraIntrinsics(cameraId, &cameraIntrinsics);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: get_external_camera_intrinsics(%d) failed with code %d", cameraId, result);
+                ALOGE("Godot OvrMrc: get_external_camera_intrinsics(%d) failed with code %d", cameraId, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
@@ -361,14 +363,14 @@ void godot_transform_from_ovrm_pose(godot_transform *dest, const ovrmPosef &pose
 GDCALLINGCONV godot_variant get_external_camera_extrinsics(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: get_external_camera_extrinsics(int cameraId) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: get_external_camera_extrinsics(int cameraId) requires 1 parameter; got %d", p_num_args);
         } else {
             int cameraId = api->godot_variant_as_int(p_args[0]);
             ovrmCameraExtrinsics cameraExtrinsics;
 
             ovrmResult result = ovrm_GetAPIs()->GetExternalCameraExtrinsics(cameraId, &cameraExtrinsics);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: get_external_camera_extrinsics(%d) failed with code %d", cameraId, result);
+                ALOGE("Godot OvrMrc: get_external_camera_extrinsics(%d) failed with code %d", cameraId, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
@@ -417,13 +419,13 @@ GDCALLINGCONV godot_variant get_external_camera_extrinsics(godot_object *p_insta
 GDCALLINGCONV godot_variant sync_mrc_frame(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 1) {
-            ALOGE("OvrMrc: sync_mrc_frame(int syncId) requires 1 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: sync_mrc_frame(int syncId) requires 1 parameter; got %d", p_num_args);
         } else {
             int syncId = api->godot_variant_as_int(p_args[0]);
 
             ovrmResult result = ovrm_GetAPIs()->SyncMrcFrame(syncId);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: sync_mrc_frame(%d) failed with code %d", syncId, result);
+                ALOGE("Godot OvrMrc: sync_mrc_frame(%d) failed with code %d", syncId, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
@@ -435,19 +437,19 @@ GDCALLINGCONV godot_variant sync_mrc_frame(godot_object *p_instance, void *p_met
 GDCALLINGCONV godot_variant encode_mrc_frame(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 2) {
-            ALOGE("OvrMrc: encode_mrc_frame(int textureHandle, double timestamp) requires 3 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: encode_mrc_frame(int textureHandle, double timestamp) requires 3 parameter; got %d", p_num_args);
         } else {
             ovrmTextureHandle textureHandle = (ovrmTextureHandle)api->godot_variant_as_int(p_args[0]);
             double timestamp = api->godot_variant_as_int(p_args[1]);
 
             int outSyncId = 0;
-            ovrmResult result = ovrm_GetAPIs()->EncodeMrcFrame(&textureHandle, NULL, 0, 2/*audioChannels*/, timestamp, &outSyncId);
+            ovrmResult result = ovrm_GetAPIs()->EncodeMrcFrame((void*)textureHandle, NULL, 0, 2/*audioChannels*/, timestamp, &outSyncId);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: encode_mrc_fram(%d, %f) failed with code %d", (int)textureHandle, timestamp, result);
+                ALOGE("Godot OvrMrc: encode_mrc_frame(%d, %f) failed with code %d", (int)textureHandle, timestamp, result);
                 api->godot_variant_new_int(&ret, 0);
                 return ret;
             }
-            ALOGV("OvrMrc: encode_mrc_fram(%d, %f) -> %d", (int)textureHandle, timestamp, outSyncId);
+            ALOGV("Godot OvrMrc: encode_mrc_frame(%d, %f) -> %d", (int)textureHandle, timestamp, outSyncId);
             api->godot_variant_new_int(&ret, outSyncId);
         }
     );
@@ -457,16 +459,16 @@ GDCALLINGCONV godot_variant encode_mrc_frame(godot_object *p_instance, void *p_m
 GDCALLINGCONV godot_variant encode_mrc_frame_with_dual_texture(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
     CHECK_OVR(
         if (p_num_args != 3) {
-            ALOGE("OvrMrc: encode_mrc_frame_with_dual_texture(int backgroundTextureHandle, int foregroundTextureHandle, double timestamp) requires 3 parameter; got %d", p_num_args);
+            ALOGE("Godot OvrMrc: encode_mrc_frame_with_dual_texture(int backgroundTextureHandle, int foregroundTextureHandle, double timestamp) requires 3 parameter; got %d", p_num_args);
         } else {
             ovrmTextureHandle backgroundTextureHandle = (ovrmTextureHandle)api->godot_variant_as_int(p_args[0]);
             ovrmTextureHandle foregroundTextureHandle = (ovrmTextureHandle)api->godot_variant_as_int(p_args[1]);
             double timestamp = api->godot_variant_as_real(p_args[2]);
 
             int outSyncId = 0;
-            ovrmResult result = ovrm_GetAPIs()->EncodeMrcFrameWithDualTextures(&backgroundTextureHandle, &foregroundTextureHandle, NULL, 0, 2/*audioChannels*/, timestamp, &outSyncId);
+            ovrmResult result = ovrm_GetAPIs()->EncodeMrcFrameWithDualTextures((void*)backgroundTextureHandle, (void*)foregroundTextureHandle, NULL, 0, 2/*audioChannels*/, timestamp, &outSyncId);
             if (result != ovrmSuccess) {
-                ALOGE("OvrMrc: encode_mrc_frame_with_dual_texture(%d, %d, %f) failed with code %d", (int)backgroundTextureHandle, (int)foregroundTextureHandle, timestamp, result);
+                ALOGE("Godot OvrMrc: encode_mrc_frame_with_dual_texture(%d, %d, %f) failed with code %d", (int)backgroundTextureHandle, (int)foregroundTextureHandle, timestamp, result);
                 api->godot_variant_new_bool(&ret, false);
                 return ret;
             }
