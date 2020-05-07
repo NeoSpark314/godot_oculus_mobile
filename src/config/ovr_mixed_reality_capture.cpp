@@ -476,3 +476,4 @@ GDCALLINGCONV godot_variant encode_mrc_frame_with_dual_texture(godot_object *p_i
         }
     );
 }
+

@@ -26,7 +26,7 @@ GDCALLINGCONV godot_variant get_tracking_space(godot_object *p_instance, void *p
 GDCALLINGCONV godot_variant set_tracking_space(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 
 // implements VrApi.h: ovrPosef vrapi_LocateTrackingSpace( ovrMobile * ovr, ovrTrackingSpace target );
-// not yet implemented
+GDCALLINGCONV godot_variant locate_tracking_space(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 
 
 #ifdef __cplusplus
