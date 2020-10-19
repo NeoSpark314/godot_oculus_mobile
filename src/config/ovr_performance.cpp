@@ -80,11 +80,7 @@ GDCALLINGCONV godot_variant set_foveation_level(godot_object *, void *, void *p_
 
 				// Validate the foveation level.
 				bool foveation_valid = false;
-				if (ovrmobile::is_oculus_go_device(ovr_java)) {
-				    // Foveation level for the Oculus Go ranges from 0 to 3
-				    // See https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-ffr/
-				    foveation_valid = foveation_level >= 0 && foveation_level <= 3;
-				} else if (ovrmobile::is_oculus_quest_device(ovr_java)) {
+				if (ovrmobile::is_oculus_quest_device(ovr_java)) {
 				    // Foveation level for the Oculus Quest ranges from 0 to 4
 				    // See // - Oculus Quest: https://developer.oculus.com/documentation/quest/latest/concepts/mobile-ffr/
 				    foveation_valid = foveation_level >= 0 && foveation_level <= 4;
@@ -110,9 +106,7 @@ GDCALLINGCONV godot_variant set_enable_dynamic_foveation(godot_object *p_instanc
 				// Retrieve if set enable or disable
 				bool enable_dynamic_foveation = api->godot_variant_as_bool(p_args[0]);
 				bool dynamic_foveation_valid = false;
-				if (ovrmobile::is_oculus_go_device(ovr_java)) {
-					dynamic_foveation_valid = false;
-				} else if (ovrmobile::is_oculus_quest_device(ovr_java)) {
+				if (ovrmobile::is_oculus_quest_device(ovr_java)) {
 					dynamic_foveation_valid = true;
 				}
 

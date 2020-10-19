@@ -78,8 +78,6 @@ void godot_transform_from_ovrMatrix(godot_transform *p_dest, const ovrMatrix4f *
 
 void godot_transform_from_ovr_pose(godot_transform *dest, const ovrPosef &pose, const float world_scale);
 
-bool is_oculus_go_device(const ovrJava * java);
-
 bool is_oculus_quest_device(const ovrJava * java);
 
 class OpenGLExtensions {

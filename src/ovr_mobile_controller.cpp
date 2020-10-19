@@ -18,8 +18,6 @@ const float kGripTriggerPressedThreshold = 0.6f;
 const int kInvalidGodotControllerId = 0;
 
 const char *kUnsupportedController = "Unsupported Controller";
-const char *kGearVRController = "Gear VR Controller";
-const char *kOculusGoController = "Oculus Go Controller";
 const char *kOculusTouchLeftController = "Oculus Touch Left Controller";
 const char *kOculusTouchRightController = "Oculus Touch Right Controller";
 const char *kOculusTrackedLeftHand = "Oculus Tracked Left Hand";
@@ -134,13 +132,6 @@ void OvrMobileController::update_controller_input_state_tracked_remote(ovrMobile
 			arvr_api->godot_arvr_set_controller_button(controller_state.godot_controller_id, 14, check_bit(input_state.Buttons, ovrButton_RThumb));
 		}
 	}
-
-	if (is_oculus_go_controller(controller_state.remote_capabilities) ||
-			is_gear_vr_controller(controller_state.remote_capabilities)) {
-		arvr_api->godot_arvr_set_controller_button(controller_state.godot_controller_id, 1, check_bit(input_state.Buttons, ovrButton_Back)); // Back button
-		arvr_api->godot_arvr_set_controller_button(controller_state.godot_controller_id, 3, check_bit(input_state.Buttons, ovrButton_Enter)); // Touchpad click
-		arvr_api->godot_arvr_set_controller_button(controller_state.godot_controller_id, 7, check_bit(input_state.Buttons, ovrButton_A)); // Set for trigger button
-	}
 }
 
 void OvrMobileController::update_controller_input_state_hand(ovrMobile *ovr, ControllerState& controller_state) {
@@ -222,7 +213,7 @@ void OvrMobileController::update_controllers_connection_state(ovrMobile *ovr, ov
 	// Check controller(s) connection state.
 	ovrInputCapabilityHeader capability_header;
 	for (uint32_t device_index = 0; vrapi_EnumerateInputDevices(ovr, device_index, &capability_header) >= 0; device_index++) {
-		// Tracked remote (e.g: Gear VR, Oculus Go, Oculus Quest controllers).
+		// Tracked remote (Oculus Quest controllers).
 		if (capability_header.Type == ovrControllerType_TrackedRemote) {
 			ovrInputTrackedRemoteCapabilities tracked_remote_capabilities;
 			tracked_remote_capabilities.Header = capability_header;
@@ -299,14 +290,6 @@ void OvrMobileController::update_controllers_connection_state(ovrMobile *ovr, ov
 
 const char *OvrMobileController::get_controller_model_name(const ControllerState& controller_state) {
 	if (controller_state.capability_header.Type == ovrControllerType_TrackedRemote) {
-		if (is_gear_vr_controller(controller_state.remote_capabilities)) {
-			return kGearVRController;
-		}
-
-		if (is_oculus_go_controller(controller_state.remote_capabilities)) {
-			return kOculusGoController;
-		}
-
 		if (is_oculus_touch_controller(controller_state.remote_capabilities)) {
 			if (is_left_hand_controller(controller_state.remote_capabilities)) {
 				return kOculusTouchLeftController;

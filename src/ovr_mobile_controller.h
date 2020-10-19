@@ -73,14 +73,6 @@ private:
 		return check_bit(capabilities.ControllerCapabilities, ovrControllerCaps_HasTrackpad);
 	}
 
-	inline bool is_gear_vr_controller(const ovrInputTrackedRemoteCapabilities &capabilities) const {
-		return check_bit(capabilities.ControllerCapabilities, ovrControllerCaps_ModelGearVR);
-	}
-
-	inline bool is_oculus_go_controller(const ovrInputTrackedRemoteCapabilities &capabilities) const {
-		return check_bit(capabilities.ControllerCapabilities, ovrControllerCaps_ModelOculusGo);
-	}
-
 	inline bool is_oculus_touch_controller(const ovrInputTrackedRemoteCapabilities &capabilities) const {
 		return check_bit(capabilities.ControllerCapabilities, ovrControllerCaps_ModelOculusTouch);
 	}

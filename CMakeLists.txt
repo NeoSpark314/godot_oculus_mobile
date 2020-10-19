@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-option(EnableMRC "Enable Mixed Reality Capture. Requires OVRMrcLib" OFF)
+option(EnableMRC "Enable Mixed Reality Capture. Requires OVRMrcLib" ON)
 
 # Default android abi is arm64-v8a
 if (NOT ANDROID_ABI)
@@ -150,14 +150,6 @@ set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS ${GODOT_LI
 
 # Copy the VrApi shared library to the output directory.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${VRAPI_LIB_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-
-#if (EnableMRC)
-#    if (EXISTS ${OVR_MRC_LIB_PATH})
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OVR_MRC_LIB_PATH} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#    else()
-#        message(FATAL_ERROR "Could not find MRC library ${OVR_MRC_LIB_PATH}")
-#    endif()
-#endif(EnableMRC)
 
 set(BITS 32)
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
