@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
 
-option(EnableMRC "Enable Mixed Reality Capture. Requires OVRMrcLib" ON)
-
 # Default android abi is arm64-v8a
 if (NOT ANDROID_ABI)
     set(ANDROID_ABI "arm64-v8a")
@@ -24,10 +22,6 @@ else ()
     add_definitions(-DNDEBUG)
     set(VRAPI_LIB_BUILD_TYPE Release)
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
-
-if (EnableMRC)
-    add_definitions(-DENABLE_MRC)
-endif (EnableMRC)
 
 if (NOT (ANDROID_STL STREQUAL "c++_shared"))
     set(ANDROID_STL "c++_shared")
@@ -56,7 +50,7 @@ project(godot_ovrmobile)
 
 # Set the default output directory.
 if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/demo/addons/${CMAKE_PROJECT_NAME}/libs/${ANDROID_ABI}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/release/addons/${CMAKE_PROJECT_NAME}/libs/${ANDROID_ABI}")
 endif (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 
 # Create the default output directory if necessary.

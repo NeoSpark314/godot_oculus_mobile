@@ -145,7 +145,7 @@ GDCALLINGCONV godot_variant initialize(godot_object *p_instance, void *p_method_
             api->godot_variant_new_bool(&ret, false);
             return ret;
         }
-        ALOGV("Godot OvrMrc: current egl context = %d", eglGetCurrentContext());
+        ALOGV("Godot OvrMrc: current egl context = %zx", (size_t)eglGetCurrentContext());
 
         api->godot_variant_new_bool(&ret, true);
     );
