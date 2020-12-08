@@ -1,4 +1,4 @@
-#include "config_common.h"
+#include "api_common.h"
 #include "ovr_mixed_reality_capture.h"
 
 #include "OVR_Mrc_Shim.h"

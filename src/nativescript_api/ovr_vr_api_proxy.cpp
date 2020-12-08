@@ -1,4 +1,4 @@
-#include "config_common.h"
+#include "api_common.h"
 #include "ovr_vr_api_proxy.h"
 
 static const char *kClassName = "OvrVrApiProxy";
