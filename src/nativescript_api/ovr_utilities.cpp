@@ -43,6 +43,11 @@ void register_gdnative_utilities(void *p_handle) {
 		method.method = &get_head_linear_acceleration;
 		nativescript_api->godot_nativescript_register_method(p_handle, kClassName, "get_head_linear_acceleration", attributes, method);
 
+		method.method = &is_oculus_quest_1_device;
+		nativescript_api->godot_nativescript_register_method(p_handle, kClassName, "is_oculus_quest_1_device", attributes, method);
+		method.method = &is_oculus_quest_2_device;
+		nativescript_api->godot_nativescript_register_method(p_handle, kClassName, "is_oculus_quest_2_device", attributes, method);
+
 	}
 }
 
@@ -205,3 +210,23 @@ GDCALLINGCONV godot_variant get_head_linear_acceleration(godot_object *p_instanc
 		api->godot_variant_new_vector3(&ret, &gd_vector);
 	)
 }
+
+
+
+GDCALLINGCONV godot_variant is_oculus_quest_1_device(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
+	CHECK_OVR(
+        ovrDeviceType device_type = (ovrDeviceType)(vrapi_GetSystemPropertyInt(ovr_mobile_session->get_ovr_java(), VRAPI_SYS_PROP_DEVICE_TYPE));
+		bool is_quest_1 = (device_type >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START) && (device_type <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END);
+		api->godot_variant_new_bool(&ret, is_quest_1);	
+	)
+}
+
+GDCALLINGCONV godot_variant is_oculus_quest_2_device(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args) {
+	CHECK_OVR(
+        ovrDeviceType device_type = (ovrDeviceType)(vrapi_GetSystemPropertyInt(ovr_mobile_session->get_ovr_java(), VRAPI_SYS_PROP_DEVICE_TYPE));
+		bool is_quest_1 = (device_type >= VRAPI_DEVICE_TYPE_OCULUSQUEST2_START) && (device_type <= VRAPI_DEVICE_TYPE_OCULUSQUEST2_END);
+		api->godot_variant_new_bool(&ret, is_quest_1);	
+	)
+}
+
+

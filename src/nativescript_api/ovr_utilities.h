@@ -32,6 +32,10 @@ GDCALLINGCONV godot_variant get_head_linear_velocity(godot_object *p_instance, v
 GDCALLINGCONV godot_variant get_head_angular_acceleration(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 GDCALLINGCONV godot_variant get_head_linear_acceleration(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 
+GDCALLINGCONV godot_variant is_oculus_quest_1_device(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
+GDCALLINGCONV godot_variant is_oculus_quest_2_device(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
+
+
 
 #ifdef __cplusplus
 }
