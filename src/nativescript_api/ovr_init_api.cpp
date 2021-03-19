@@ -3,6 +3,14 @@
 
 static const char *kClassName = "OvrInitAPI";
 
+GDCALLINGCONV void *ovr_init_api_constructor(godot_object *instance, void *method_data);
+GDCALLINGCONV void ovr_init_api_destructor(godot_object *instance, void *method_data, void *user_data);
+
+// Set the factor by which to multiply the recommended render target size for the app.
+GDCALLINGCONV godot_variant set_render_target_size_multiplier(godot_object *instance, void *method_data, void *user_data, int num_args, godot_variant **args);
+
+
+
 void register_gdnative_init_api(void *handle) {
     // register the constructor and destructor of the OvrInitAPI class for use in GDScript
     godot_instance_create_func create = { nullptr, nullptr, nullptr};

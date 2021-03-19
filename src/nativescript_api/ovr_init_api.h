@@ -15,12 +15,6 @@ extern "C" {
 // This methhod should be called from godot_ovrmobile_nativescript_init.
 void register_gdnative_init_api(void *handle);
 
-GDCALLINGCONV void *ovr_init_api_constructor(godot_object *instance, void *method_data);
-GDCALLINGCONV void ovr_init_api_destructor(godot_object *instance, void *method_data, void *user_data);
-
-// Set the factor by which to multiply the recommended render target size for the app.
-GDCALLINGCONV godot_variant set_render_target_size_multiplier(godot_object *instance, void *method_data, void *user_data, int num_args, godot_variant **args);
-
 #ifdef __cplusplus
 }
 #endif
