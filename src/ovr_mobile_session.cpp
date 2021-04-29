@@ -83,7 +83,7 @@ bool OvrMobileSession::initialize() {
 	height = static_cast<int>(render_target_size_multiplier *
 							  vrapi_GetSystemPropertyInt(&java,
 														 VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
-	ALOGV(" vrapi version string: '%s'", vrapi_GetVersionString());
+	ALOGV(" vrapi version string: '%s': test compositor layers", vrapi_GetVersionString());
 	ALOGV("   render target size multiplier: %f", render_target_size_multiplier);
 	ALOGV("   vrapi render target size: w %i / h %i", width, height);
 
@@ -147,21 +147,25 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
 
 	int ovr_eye = get_ovr_eye_from_godot_eye(godot_eye);
 
+	int layer_count = 0;
+
+	ovrLayerProjection2& render_world_layer = layers[layer_count++];
+
 	// Godot iterates first through the left eye, followed by the right eye in order
 	// to submit the frame to the vrapi. So we perform initialization while on the left eye,
 	// and submit our frame while on the right eye.
 	if (ovr_eye == static_cast<int>(ovrEye::VRAPI_EYE_LEFT)) {
-		layer = vrapi_DefaultLayerProjection2();
-		layer.HeadPose = head_tracker.HeadPose;
-		layer.Header.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
+		render_world_layer = vrapi_DefaultLayerProjection2();
+		render_world_layer.HeadPose = head_tracker.HeadPose;
+		render_world_layer.Header.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
 
-		layer.Header.ColorScale = default_layer_color_scale;
+		render_world_layer.Header.ColorScale = default_layer_color_scale;
 	}
 
 	// Set the layer's texture properties.
-	layer.Textures[ovr_eye].ColorSwapChain = frame_buffers[ovr_eye]->get_texture_swap_chain();
-	layer.Textures[ovr_eye].SwapChainIndex = frame_buffers[ovr_eye]->get_texture_swap_chain_index();
-	layer.Textures[ovr_eye].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(
+	render_world_layer.Textures[ovr_eye].ColorSwapChain = frame_buffers[ovr_eye]->get_texture_swap_chain();
+	render_world_layer.Textures[ovr_eye].SwapChainIndex = frame_buffers[ovr_eye]->get_texture_swap_chain_index();
+	render_world_layer.Textures[ovr_eye].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(
 			&head_tracker.Eye[ovr_eye].ProjectionMatrix);
 
 	frame_buffers[ovr_eye]->advance_texture_swap_chain();
@@ -169,15 +173,20 @@ void OvrMobileSession::commit_for_eye(godot_int godot_eye) {
 	if (ovr_eye == static_cast<int>(ovrEye::VRAPI_EYE_RIGHT)) {
 
 		// Submit the frame.
-		const ovrLayerHeader2 *layers[] = { &layer.Header };
+
+		const ovrLayerHeader2* layerHeaders[ovrMaxLayerCount] = {0};
+
+		for (int i = 0; i < layer_count; i++) {
+			layerHeaders[i] = &layers[i].Header;
+		}
 
 		ovrSubmitFrameDescription2 frameDesc = {};
 		frameDesc.Flags = 0;
 		frameDesc.SwapInterval = swap_interval;
 		frameDesc.FrameIndex = frame_index;
 		frameDesc.DisplayTime = predicted_display_time;
-		frameDesc.LayerCount = 1;
-		frameDesc.Layers = layers;
+		frameDesc.LayerCount = layer_count;
+		frameDesc.Layers = layerHeaders;
 
 		// Hand over the eye images to the time warp.
 		vrapi_SubmitFrame2(ovr, &frameDesc);

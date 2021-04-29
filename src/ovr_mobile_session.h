@@ -105,7 +105,7 @@ private:
 	ovrVector4f default_layer_color_scale;
 
 	ovrJava java;
-	ovrLayerProjection2 layer;
+	ovrLayerProjection2 layers[ovrMaxLayerCount];
 	ovrMobile *ovr = nullptr;
 	ovrTracking2 head_tracker;
 
